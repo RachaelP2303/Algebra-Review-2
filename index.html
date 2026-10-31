@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 NZ Mathematics Curriculum - Algebra Assessment 2</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --border: #cbd5e1;
+            --correct: #15803d;
+            --incorrect: #b91c1c;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 680px;
+            padding: 32px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .svg-illustration {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 100%;
+            height: auto;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background-color: #dbeafe;
+            font-weight: 600;
+        }
+
+        .nav-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .nav-btn:hover { background-color: var(--primary-hover); }
+        .nav-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        .result-card {
+            background-color: #f8fafc;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feedback-item {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #fff;
+            border-left: 5px solid var(--border);
+        }
+
+        .feedback-item.correct { border-left-color: var(--correct); }
+        .feedback-item.incorrect { border-left-color: var(--incorrect); }
+
+        .teacher-panel {
+            margin-top: 30px;
+            border-top: 2px dashed var(--border);
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .pin-input {
+            width: 120px;
+            padding: 8px;
+            text-align: center;
+            font-size: 1rem;
+            margin-right: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .csv-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            text-align: left;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .csv-table th, .csv-table td {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+        }
+
+        .csv-table th { background-color: #f1f5f9; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Phase 3 Algebra Assessment 2</h1>
+        <p>NZ Mathematics Curriculum (Year 7 & Year 8)</p>
+    </div>
+
+    <div class="progress-bar" id="progress-container" style="display: none;">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <!-- START PAGE -->
+    <div id="page-start" class="page active">
+        <h2>Welcome to Your Assessment</h2>
+        <p>Please enter your details to begin:</p>
+        <div class="input-group">
+            <label for="student-name">Your Full Name:</label>
+            <input type="text" id="student-name" placeholder="Type your full name here" required>
+        </div>
+        <div class="input-group">
+            <label for="year-group">Your Year Group:</label>
+            <input type="text" id="year-group" placeholder="Type Year 7 or Year 8" required>
+        </div>
+        <button class="nav-btn" onclick="startTest()">Start Assessment</button>
+    </div>
+
+    <!-- QUESTIONS CONTAINER -->
+    <div id="questions-container"></div>
+
+    <!-- RESULTS PAGE -->
+    <div id="page-results" class="page">
+        <h2>Assessment Complete!</h2>
+        <div class="result-card">
+            <h3 id="result-score">Your Score: --%</h3>
+            <p id="result-phase">Curriculum Position: --</p>
+            <p id="result-summary"></p>
+        </div>
+
+        <h3>Diagnostic Feedback & Next Steps</h3>
+        <div id="feedback-list"></div>
+
+        <div class="teacher-panel">
+            <p><strong>Teacher Dashboard Access</strong></p>
+            <input type="password" id="teacher-pin" class="pin-input" placeholder="PIN">
+            <button class="nav-btn" style="width: auto; padding: 8px 16px;" onclick="checkPin()">Access Backend CSV</button>
+            <p id="pin-error" style="color: red; display: none; margin-top: 8px;">Incorrect PIN</p>
+            <div id="teacher-csv-display" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuiztmg-p7wawgQMw-Gheu1PVQNxSqsOsVmaE0SC4oOZSPE7FuqPGurkmB80rQS_M/exec";
+    const TEACHER_PIN = "1335";
+
+    const questions = [
+        {
+            q: "1. Look at the dot pattern below. Which type of special number sequence is being plotted?",
+            svg: `<svg class="svg-illustration" viewBox="0 0 280 130">
+                    <g fill="#3b82f6">
+                      <circle cx="30" cy="90" r="6"/>
+                      <circle cx="70" cy="90" r="6"/><circle cx="70" cy="70" r="6"/><circle cx="90" cy="90" r="6"/>
+                      <circle cx="130" cy="90" r="6"/><circle cx="150" cy="90" r="6"/><circle cx="170" cy="90" r="6"/>
+                      <circle cx="130" cy="70" r="6"/><circle cx="150" cy="70" r="6"/><circle cx="130" cy="50" r="6"/>
+                    </g>
+                    <text x="30" y="115" font-size="12" text-anchor="middle" fill="#0f172a">1</text>
+                    <text x="80" y="115" font-size="12" text-anchor="middle" fill="#0f172a">3</text>
+                    <text x="150" y="115" font-size="12" text-anchor="middle" fill="#0f172a">6</text>
+                  </svg>`,
+            options: ["A) Square Numbers", "B) Triangular Numbers", "C) Cube Numbers", "D) Prime Numbers"],
+            correct: 1,
+            topic: "Special Number Patterns",
+            feedback: "Correct! The numbers 1, 3, 6, 10 form Triangular Numbers."
+        },
+        {
+            q: "2. Simplify this expression by expanding the bracket first: 3(y + 4) - 2",
+            options: ["A) 3y + 10", "B) 3y + 12", "C) 3y + 14", "D) 3y + 2"],
+            correct: 0,
+            topic: "Expanding & Simplifying",
+            feedback: "Correct! 3(y + 4) = 3y + 12. Then 12 - 2 gives 3y + 10."
+        },
+        {
+            q: "3. Factorise this expression completely: 12m + 18",
+            options: ["A) 2(6m + 9)", "B) 3(4m + 6)", "C) 6(2m + 3)", "D) 12(m + 18)"],
+            correct: 2,
+            topic: "Highest Common Factorising",
+            feedback: "Correct! Taking out the highest common factor 6 gives 6(2m + 3)."
+        },
+        {
+            q: "4. Look at the function table below. Which multi-step rule describes the relationship between x and y?",
+            svg: `<svg class="svg-illustration" viewBox="0 0 320 90">
+                    <rect x="10" y="15" width="300" height="60" fill="#fff" stroke="#cbd5e1" rx="4"/>
+                    <line x1="10" y1="45" x2="310" y2="45" stroke="#cbd5e1" stroke-width="2"/>
+                    <line x1="110" y1="15" x2="110" y2="75" stroke="#cbd5e1" stroke-width="2"/>
+                    <line x1="160" y1="15" x2="160" y2="75" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <line x1="210" y1="15" x2="210" y2="75" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <line x1="260" y1="15" x2="260" y2="75" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <text x="20" y="35" font-weight="bold" font-size="13" fill="#2563eb">x (Input)</text>
+                    <text x="20" y="65" font-weight="bold" font-size="13" fill="#15803d">y (Output)</text>
+                    <text x="135" y="35" font-size="14" font-weight="600" text-anchor="middle">1</text>
+                    <text x="135" y="65" font-size="14" font-weight="600" text-anchor="middle">7</text>
+                    <text x="185" y="35" font-size="14" font-weight="600" text-anchor="middle">2</text>
+                    <text x="185" y="65" font-size="14" font-weight="600" text-anchor="middle">10</text>
+                    <text x="235" y="35" font-size="14" font-weight="600" text-anchor="middle">3</text>
+                    <text x="235" y="65" font-size="14" font-weight="600" text-anchor="middle">13</text>
+                    <text x="285" y="35" font-size="14" font-weight="600" text-anchor="middle">4</text>
+                    <text x="285" y="65" font-size="14" font-weight="600" text-anchor="middle">16</text>
+                  </svg>`,
+            options: ["A) y = 3x + 4", "B) y = 4x + 3", "C) y = 7x", "D) y = 2x + 5"],
+            correct: 0,
+            topic: "Multi-Step Function Rules",
+            feedback: "Correct! The output increases by 3 each time (3x), and adding 4 gives y = 3x + 4."
+        },
+        {
+            q: "5. Given the formula y = 3x + 4, calculate the value of y when x = 5.",
+            options: ["A) y = 12", "B) y = 35", "C) y = 19", "D) y = 23"],
+            correct: 2,
+            topic: "Substitution into Formulae",
+            feedback: "Correct! Substitute 5 into x: 3(5) + 4 = 15 + 4 = 19."
+        },
+        {
+            q: "6. Simplify this algebraic expression with multiple terms: 4x + 2y + 3x - y",
+            options: ["A) 7x + y", "B) 7x + 3y", "C) 8xy", "D) 7x - y"],
+            correct: 0,
+            topic: "Collecting Like Terms",
+            feedback: "Correct! Collect x terms (4x + 3x = 7x) and y terms (2y - y = y) to get 7x + y."
+        },
+        {
+            q: "7. Point P is plotted on the grid below. In which quadrant of the coordinate plane is point P located?",
+            svg: `<svg class="svg-illustration" viewBox="0 0 200 160">
+                    <line x1="20" y1="80" x2="180" y2="80" stroke="#475569" stroke-width="2"/>
+                    <line x1="100" y1="10" x2="100" y2="150" stroke="#475569" stroke-width="2"/>
+                    <circle cx="50" cy="40" r="6" fill="#ef4444"/>
+                    <text x="40" y="30" font-weight="bold" fill="#ef4444">P (-3, 4)</text>
+                    <text x="160" y="75" font-size="10">X</text><text x="105" y="20" font-size="10">Y</text>
+                  </svg>`,
+            options: ["A) Quadrant 1", "B) Quadrant 2", "C) Quadrant 3", "D) Quadrant 4"],
+            correct: 1,
+            topic: "Four-Quadrant Coordinate Plane",
+            feedback: "Correct! The top-left region (negative X, positive Y) is Quadrant 2."
+        },
+        {
+            q: "8. Solve this equation with rational numbers: 2.5a = 15",
+            options: ["A) a = 37.5", "B) a = 12.5", "C) a = 6", "D) a = 5"],
+            correct: 2,
+            topic: "Rational Equations",
+            feedback: "Correct! Divide 15 by 2.5 to find a = 6."
+        },
+        {
+            q: "9. Expand this expression with single brackets: 4(2x - 5)",
+            options: ["A) 8x - 5", "B) 8x - 20", "C) 6x - 20", "D) 8x + 20"],
+            correct: 1,
+            topic: "Expanding Single Brackets",
+            feedback: "Correct! Multiply both terms inside by 4: 4 × 2x = 8x, and 4 × -5 = -20."
+        },
+        {
+            q: "10. Factorise fully: 15x - 5",
+            options: ["A) 5(3x - 1)", "B) 5(3x - 5)", "C) 15(x - 1)", "D) 3(5x - 1)"],
+            correct: 0,
+            topic: "Factorising Expressions",
+            feedback: "Correct! Factoring out 5 leaves 5(3x - 1)."
+        },
+        {
+            q: "11. Calculate the value of the formula A = bh ÷ 2 when b = 8 and h = 6.",
+            options: ["A) 48", "B) 14", "C) 24", "D) 28"],
+            correct: 2,
+            topic: "Area Formula Substitution",
+            feedback: "Correct! Substitute values: (8 × 6) ÷ 2 = 48 ÷ 2 = 24."
+        },
+        {
+            q: "12. Look at the line graph. What is the constant rate of increase (gradient) for this linear pattern?",
+            svg: `<svg class="svg-illustration" viewBox="0 0 200 150">
+                    <line x1="30" y1="120" x2="180" y2="120" stroke="#475569" stroke-width="2"/>
+                    <line x1="30" y1="20" x2="30" y2="120" stroke="#475569" stroke-width="2"/>
+                    <line x1="30" y1="120" x2="170" y2="20" stroke="#2563eb" stroke-width="3"/>
+                    <circle cx="30" cy="120" r="4" fill="#2563eb"/>
+                    <circle cx="100" cy="70" r="4" fill="#2563eb"/>
+                    <circle cx="170" cy="20" r="4" fill="#2563eb"/>
+                    <text x="20" y="125" font-size="10">0</text>
+                    <text x="100" y="135" font-size="10">1</text>
+                    <text x="170" y="135" font-size="10">2</text>
+                    <text x="10" y="75" font-size="10">2</text>
+                    <text x="10" y="25" font-size="10">4</text>
+                  </svg>`,
+            options: ["A) Increases by 1", "B) Increases by 2", "C) Increases by 4", "D) Decreases by 2"],
+            correct: 1,
+            topic: "Linear Graphing & Rates",
+            feedback: "Correct! For every 1 unit step along X, Y increases by 2."
+        },
+        {
+            q: "13. Solve this linear inequality: x - 3 ≥ -5",
+            options: ["A) x ≥ -8", "B) x ≥ 2", "C) x ≥ -2", "D) x ≤ -2"],
+            correct: 2,
+            topic: "Linear Inequalities",
+            feedback: "Correct! Add 3 to both sides: -5 + 3 = -2, so x ≥ -2."
+        },
+        {
+            q: "14. Rearrange the formula v = u + at to make 'a' the subject when t = 1.",
+            options: ["A) a = v - u", "B) a = v + u", "C) a = v ÷ u", "D) a = u - v"],
+            correct: 0,
+            topic: "Rearranging Formulae",
+            feedback: "Correct! Subtract u from v to isolate a."
+        },
+        {
+            q: "15. Which algebraic form correctly expresses: a ÷ b ?",
+            options: ["A) ab", "B) a - b", "C) a / b", "D) b / a"],
+            correct: 2,
+            topic: "Algebraic Notation",
+            feedback: "Correct! Division in algebra is written as a fraction: a / b."
+        }
+    ];
+
+    let userAnswers = {};
+    let studentData = {};
+
+    function startTest() {
+        const name = document.getElementById('student-name').value.trim();
+        const year = document.getElementById('year-group').value.trim();
+
+        if (!name || !year) {
+            alert('Please enter your name and year group before starting.');
+            return;
+        }
+
+        studentData.name = name;
+        studentData.year = year;
+
+        document.getElementById('page-start').classList.remove('active');
+        document.getElementById('progress-container').style.display = 'block';
+        buildQuestions();
+        showQuestion(1);
+    }
+
+    function buildQuestions() {
+        const container = document.getElementById('questions-container');
+        container.innerHTML = '';
+
+        questions.forEach((q, idx) => {
+            const qNum = idx + 1;
+            const page = document.createElement('div');
+            page.className = 'page';
+            page.id = `page-q${qNum}`;
+
+            let html = `<div class="question-text">${q.q}</div>`;
+            if (q.svg) html += q.svg;
+
+            html += `<div class="options-grid">`;
+            q.options.forEach((opt, oIdx) => {
+                html += `<button class="option-btn" onclick="selectOption(${qNum}, ${oIdx}, this)">${opt}</button>`;
+            });
+            html += `</div>`;
+
+            if (qNum < questions.length) {
+                html += `<button class="nav-btn" id="btn-next-${qNum}" disabled onclick="nextQuestion(${qNum})">Next Question</button>`;
+            } else {
+                html += `<button class="nav-btn" id="btn-next-${qNum}" disabled onclick="submitTest()">Submit Assessment</button>`;
+            }
+
+            page.innerHTML = html;
+            container.appendChild(page);
+        });
+    }
+
+    function selectOption(qNum, optionIdx, btn) {
+        userAnswers[qNum] = optionIdx;
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById(`btn-next-${qNum}`).disabled = false;
+    }
+
+    function showQuestion(qNum) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page-q${qNum}`).classList.add('active');
+        const percent = (qNum / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${percent}%`;
+    }
+
+    function nextQuestion(qNum) { showQuestion(qNum + 1); }
+
+    function submitTest() {
+        let score = 0;
+        const qResults = {};
+        const missedTopics = [];
+
+        questions.forEach((q, idx) => {
+            const qNum = idx + 1;
+            const isCorrect = userAnswers[qNum] === q.correct;
+            if (isCorrect) {
+                score++;
+                qResults[`q${qNum}`] = "Correct";
+            } else {
+                qResults[`q${qNum}`] = "Incorrect";
+                if (!missedTopics.includes(q.topic)) missedTopics.push(q.topic);
+            }
+        });
+
+        const percentage = Math.round((score / questions.length) * 100);
+        let phaseResult = "";
+        let summaryText = "";
+
+        if (percentage >= 80) {
+            phaseResult = "Phase 3 Secure (Working At/Above Expectation)";
+            summaryText = "Awesome work! You show confident mastery of multi-step function rules, expanded brackets, factorising, and coordinate graphs.";
+        } else if (percentage >= 50) {
+            phaseResult = "Phase 3 Developing (Working Towards Expectation)";
+            summaryText = "Good effort! You understand core Phase 3 concepts well. Continue practicing multi-step function rules and coordinate plane quadrants.";
+        } else {
+            phaseResult = "Phase 3 Foundation (Building Core Concepts)";
+            summaryText = "You are at the start of Phase 3 learning. Focus on basic bracket expansion, substitution, and collecting like terms.";
+        }
+
+        const improvementText = missedTopics.length > 0 ? missedTopics.join(", ") : "None - Mastered all topics!";
+
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('progress-container').style.display = 'none';
+        document.getElementById('page-results').classList.add('active');
+
+        document.getElementById('result-score').innerText = `Your Score: ${percentage}% (${score}/${questions.length})`;
+        document.getElementById('result-phase').innerText = `Curriculum Status: ${phaseResult}`;
+        document.getElementById('result-summary').innerText = summaryText;
+
+        const feedbackList = document.getElementById('feedback-list');
+        feedbackList.innerHTML = '';
+
+        questions.forEach((q, idx) => {
+            const qNum = idx + 1;
+            const isCorrect = userAnswers[qNum] === q.correct;
+            const item = document.createElement('div');
+            item.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+            item.innerHTML = `
+                <strong>Question ${qNum}: ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>
+                <p style="margin: 4px 0 0 0;">${q.feedback}</p>
+            `;
+            feedbackList.appendChild(item);
+        });
+
+        const payload = {
+            studentName: studentData.name,
+            yearGroup: studentData.year,
+            totalCorrect: score,
+            percentage: `${percentage}%`,
+            phaseResult: phaseResult,
+            improvementAreas: improvementText,
+            ...qResults
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(err => console.error("Data submission error:", err));
+    }
+
+    function checkPin() {
+        const pin = document.getElementById('teacher-pin').value;
+        if (pin === TEACHER_PIN) {
+            document.getElementById('pin-error').style.display = 'none';
+            const display = document.getElementById('teacher-csv-display');
+            display.style.display = 'block';
+            display.innerHTML = `
+                <h4>Backend Teacher CSV Preview</h4>
+                <table class="csv-table">
+                    <tr>
+                        <th>Timestamp</th><th>Student Name</th><th>Year</th><th>Score</th><th>%</th><th>Phase Status</th><th>Areas for Improvement</th>
+                    </tr>
+                    <tr>
+                        <td>${new Date().toLocaleDateString()}</td><td>${studentData.name || 'Sample Student'}</td><td>${studentData.year || 'Year 8'}</td><td>${Object.values(userAnswers).length}/15</td><td>${Math.round((Object.values(userAnswers).length/15)*100)}%</td><td>Phase 3 Active</td><td>Submitted to Google Sheet</td>
+                    </tr>
+                </table>
+            `;
+        } else {
+            document.getElementById('pin-error').style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>
